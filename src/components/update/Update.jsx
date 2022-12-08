@@ -4,27 +4,36 @@ import "./update.css";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { update } from "../../redux/userSlice";
+
+import { updateUser } from "../../redux/apiCalls";
 
 export default function Update() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-const dispatch=useDispatch()
-const user= useSelector(state=>state.user)
-console.log(user.name, user.email);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.userInfo);
+  console.log(user.name, user.email);
 
-const handleUpdate=(e)=>{
-e.preventDefault()
-dispatch(update({name,email}))
-}
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    updateUser({ name, email }, dispatch);
+    // dispatch(update({name,email}))
+  };
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    // dispatch(remove())
+  };
 
   return (
     <div className="update">
       <div className="updateWrapper">
         <h3 className="updateTitle">Update Your Account</h3>
         <Warning />
-        <button className="delete">Delete Account</button>
+        <button className="delete" onClick={handleDelete}>
+          Delete Account
+        </button>
         <div className="updateContainer">
           <form>
             <div className="formItem">

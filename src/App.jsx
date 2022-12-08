@@ -6,7 +6,7 @@ import "./app.css";
 import { useState } from "react";
 
 const App = () => {
-  const [name,setName]= useState("Ethem")
+  const [name,setName]= useState("Hakkı")
   return (
     <>
       <Navbar name={name} />

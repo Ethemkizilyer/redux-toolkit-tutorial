@@ -5,34 +5,60 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
-import { updateUser } from "../../redux/apiCalls";
 import { addUser2, deleteUser2, updateUser2 } from "../../redux/userSlice";
+import axios from "axios";
+import { useEffect } from "react";
 
 export default function Update() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [nam, setNam] = useState({ name: "", email: "", password: "" });
+
+  const [deneme, setDeneme] = useState("");
 
   const dispatch = useDispatch();
   const { userInfo, pending, error } = useSelector((state) => state.user);
-  // console.log(user.name, user.email);
+  const user = useSelector((state) => state.user);
 
 
+  const getUser = async (dispatch) => {
+    //   dispatch(updateStart());
+    try {
+      const res = await axios.get(
+        "https://63878fb8d9b24b1be3f44043.mockapi.io/users/"
+      );
 
-  
+      setDeneme(res.data);
+      // dispatch(userSlice(res.data))
+      return res.data;
+    } catch (err) {
+      // dispatch(updateError());
+    }
+  };
+  useEffect(() => {
+    getUser();
+  }, [user]);
+
   const handleUpdate = (e) => {
     e.preventDefault();
-    dispatch(updateUser2({ name, email }));
+    const namu = deneme.filter((item) => item.email == nam.email);
+    const m = [{ ...nam, id: namu[0].id }];
+    dispatch(updateUser2(m));
+
     // dispatch(update({name,email}))
   };
   const handleAdd = (e) => {
     e.preventDefault();
-    dispatch(addUser2({ name, email }));
+    dispatch(addUser2(nam));
+    setNam({});
     // dispatch(update({name,email}))
   };
 
   const handleDelete = (e) => {
     e.preventDefault();
-    dispatch(deleteUser2({name,email}))
+    const na = deneme.filter(
+      (item) => item.name == nam.name && item.email == nam.email
+    );
+    dispatch(deleteUser2(na));
+    localStorage.removeItem("user");
     // dispatch(remove())
   };
 
@@ -63,7 +89,7 @@ export default function Update() {
                 className="formInput"
                 type="text"
                 placeholder={userInfo.name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setNam({ ...nam, name: e.target.value })}
               />
             </div>
             <div className="formItem">
@@ -72,12 +98,16 @@ export default function Update() {
                 className="formInput"
                 type="text"
                 placeholder={userInfo.email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setNam({ ...nam, email: e.target.value })}
               />
             </div>
             <div className="formItem">
               <label>Password</label>
-              <input className="formInput" type="password" />
+              <input
+                className="formInput"
+                type="password"
+                onChange={(e) => setNam({ ...nam, password: e.target.value })}
+              />
             </div>
             <button
               disabled={pending}
